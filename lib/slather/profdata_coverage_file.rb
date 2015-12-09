@@ -97,7 +97,7 @@ module Slather
     end
 
     def supported_file_extensions
-      ["swift"]
+      ["swift", "mm", "m"]
     end
     private :supported_file_extensions
   end
