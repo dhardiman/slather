@@ -50,7 +50,7 @@ end
 module Slather
   class Project < Xcodeproj::Project
 
-    attr_accessor :build_directory, :ignore_list, :ci_service, :coverage_service, :coverage_access_token, :source_directory, :output_directory, :xcodeproj, :show_html, :input_format, :scheme
+    attr_accessor :build_directory, :ignore_list, :ci_service, :coverage_service, :coverage_access_token, :source_directory, :output_directory, :xcodeproj, :show_html, :input_format, :scheme, :copy_assets
 
     alias_method :setup_for_coverage, :slather_setup_for_coverage
 
@@ -169,6 +169,7 @@ module Slather
       configure_output_directory_from_yml
       configure_input_format_from_yml
       configure_scheme_from_yml
+      configure_copy_assets_from_yml
     end
 
     def configure_build_directory_from_yml
@@ -197,6 +198,10 @@ module Slather
 
     def configure_scheme_from_yml
       self.scheme ||= self.class.yml["scheme"] if self.class.yml["scheme"]
+    end
+
+    def configure_copy_assets_from_yml
+      self.copy_assets ||= self.class.yml["copy_assets"] if self.class.yml["copy_assets"]
     end
 
     def ci_service=(service)

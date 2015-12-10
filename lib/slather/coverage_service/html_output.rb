@@ -22,6 +22,7 @@ module Slather
       def post
         create_html_reports(coverage_files)
         generate_reports(@docs)
+        write_assets if coverage_files.first.project.copy_assets
 
         index_html_path = File.join(directory_path, "index.html")
         if show_html
@@ -58,7 +59,7 @@ module Slather
 
       def create_index_html(coverage_files)
         project_name = File.basename(self.xcodeproj)
-        template = generate_html_template(project_name, true, false)
+        template = generate_html_template(project_name, true, false, coverage_files.first.project.copy_assets)
 
         total_relevant_lines = 0
         total_tested_lines = 0
@@ -134,7 +135,7 @@ module Slather
           is_file_empty = (source_lines.count <= 0)
         end
 
-        template = generate_html_template(filename, false, is_file_empty)
+        template = generate_html_template(filename, false, is_file_empty, coverage_file.project.copy_assets)
 
         builder = Nokogiri::HTML::Builder.with(template.at('#reports')) { |cov|
           cov.h2(:class => "cov_title") {
@@ -183,11 +184,18 @@ module Slather
         @docs[filename] = builder.doc
       end
 
-      def generate_html_template(title, is_index, is_file_empty)
-        logo_path = File.join(gem_root_path, "docs/logo.jpg")
-        css_path = File.join(gem_root_path, "assets/slather.css")
-        highlight_js_path = File.join(gem_root_path, "assets/highlight.pack.js")
-        list_js_path = File.join(gem_root_path, "assets/list.min.js")
+      def write_assets
+        FileUtils.cp(File.join(gem_root_path, "docs/logo.jpg"), directory_path)
+        FileUtils.cp(File.join(gem_root_path, "assets/slather.css"), directory_path)
+        FileUtils.cp(File.join(gem_root_path, "assets/highlight.pack.js"), directory_path)
+        FileUtils.cp(File.join(gem_root_path, "assets/list.min.js"), directory_path)
+      end
+
+      def generate_html_template(title, is_index, is_file_empty, copy_assets = false)
+        logo_path = File.join(copy_assets ? "." : gem_root_path, "docs/logo.jpg")
+        css_path = File.join(copy_assets ? "." : gem_root_path, "assets/slather.css")
+        highlight_js_path = File.join(copy_assets ? "." : gem_root_path, "assets/highlight.pack.js")
+        list_js_path = File.join(copy_assets ? "." : gem_root_path, "assets/list.min.js")
 
         builder = Nokogiri::HTML::Builder.new do |doc|
           doc.html {
