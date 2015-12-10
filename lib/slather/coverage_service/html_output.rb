@@ -95,7 +95,7 @@ module Slather
             cov.tbody(:class => "list") {
               coverage_files.each { |coverage_file|
                 filename = File.basename(coverage_file.source_file_pathname_relative_to_repo_root)
-                filename_link = "#{filename}.html"
+                filename_link = "#{CGI.escape(filename)}.html"
 
                 cov.tr {
                   percentage = coverage_file.percentage_lines_tested
