@@ -152,7 +152,6 @@ module Slather
 
           cov.table(:class => "source_code") {
             source_lines.each do |line|
-              puts line
               if input_format == "profdata"
                 data = line.split('|')
               else
