@@ -238,7 +238,7 @@ module Slather
 
       def class_for_coverage_data(coverage_data)
         case coverage_data
-        when /\d/ then "covered"
+        when /\d/ then (coverage_data.to_i > 0) ? "covered" : "missed"
         when /#/ then "missed"
         else "never"
         end
