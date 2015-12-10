@@ -5,7 +5,11 @@ module Slather
     module HtmlOutput
 
       def coverage_file_class
-        Slather::CoverageFile
+        if input_format == "profdata"
+          Slather::ProfdataCoverageFile
+        else
+          Slather::CoverageFile
+        end
       end
       private :coverage_file_class
 
@@ -122,8 +126,13 @@ module Slather
         filename = File.basename(filepath)
         percentage = coverage_file.percentage_lines_tested
 
-        cleaned_gcov_lines = coverage_file.cleaned_gcov_data.split("\n")
-        is_file_empty = (cleaned_gcov_lines.count <= 0)
+        if input_format == "profdata"
+          source_lines = coverage_file.all_lines
+          is_file_empty = source_lines.count <= 0
+        else
+          source_lines = coverage_file.cleaned_gcov_data.split("\n")
+          is_file_empty = (source_lines.count <= 0)
+        end
 
         template = generate_html_template(filename, false, is_file_empty)
 
@@ -142,8 +151,13 @@ module Slather
           end
 
           cov.table(:class => "source_code") {
-            cleaned_gcov_lines.each do |line|
-              data = line.split(':', 3)
+            source_lines.each do |line|
+              puts line
+              if input_format == "profdata"
+                data = line.split('|')
+              else
+                data = line.split(':', 3)
+              end
 
               line_number = data[1].to_i
               next unless line_number > 0
