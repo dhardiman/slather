@@ -192,10 +192,10 @@ module Slather
       end
 
       def generate_html_template(title, is_index, is_file_empty, copy_assets = false)
-        logo_path = File.join(copy_assets ? "." : gem_root_path, "docs/logo.jpg")
-        css_path = File.join(copy_assets ? "." : gem_root_path, "assets/slather.css")
-        highlight_js_path = File.join(copy_assets ? "." : gem_root_path, "assets/highlight.pack.js")
-        list_js_path = File.join(copy_assets ? "." : gem_root_path, "assets/list.min.js")
+        logo_path = File.join(copy_assets ? "." : File.join(gem_root_path, "docs"), "logo.jpg")
+        css_path = File.join(copy_assets ? "." : File.join(gem_root_path, "assets"), "slather.css")
+        highlight_js_path = File.join(copy_assets ? "." : File.join(gem_root_path, "assets"), "highlight.pack.js")
+        list_js_path = File.join(copy_assets ? "." : File.join(gem_root_path, "assets"), "list.min.js")
 
         builder = Nokogiri::HTML::Builder.new do |doc|
           doc.html {
