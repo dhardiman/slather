@@ -75,6 +75,9 @@ module Slather
     end
 
     def ignored?
+      if source_file_pathname_relative_to_repo_root.to_s.start_with? "../"
+        return true
+      end
       project.ignore_list.any? do |ignore|
         File.fnmatch(ignore, source_file_pathname_relative_to_repo_root)
       end
